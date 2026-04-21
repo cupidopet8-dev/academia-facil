@@ -230,25 +230,23 @@ export async function POST(req: Request) {
       );
     }
 
-    // 7) Envia email padrão do Supabase para definir/redefinir senha
-    const { error: resetPasswordError } =
-      await supabasePublic.auth.resetPasswordForEmail(email, {
-        redirectTo: `${siteUrl}/criar-senha`,
-      });
+   // 7) Enviar email para criar senha
+const { error: inviteError } =
+  await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
+    redirectTo: `${siteUrl}/criar-senha`,
+  });
 
-    console.log("siteUrl usado no email:", siteUrl);
-    console.log("redirectTo usado no email:", `${siteUrl}/criar-senha`);
-    console.log("RESET PASSWORD ERROR:", resetPasswordError);
+console.log("INVITE ERROR:", inviteError);
 
-    if (resetPasswordError) {
-      return NextResponse.json(
-        {
-          error: "Aluno criado, mas houve erro ao enviar o e-mail padrão.",
-          details: resetPasswordError.message ?? null,
-        },
-        { status: 500 }
-      );
-    }
+if (inviteError) {
+  return NextResponse.json(
+    {
+      error: "Aluno criado, mas erro ao enviar convite.",
+      details: inviteError.message ?? null,
+    },
+    { status: 500 }
+  );
+}
 
     return NextResponse.json({
       success: true,
