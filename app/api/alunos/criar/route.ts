@@ -231,7 +231,7 @@ export async function POST(req: Request) {
     // 7) Envia email padrão do Supabase para definir/redefinir senha
     const { error: resetPasswordError } =
       await supabasePublic.auth.resetPasswordForEmail(email, {
-        redirectTo: `${siteUrl}/reset-senha`,
+        redirectTo: `${siteUrl}/criar-senha`,
       });
 
     console.log("RESET PASSWORD ERROR:", resetPasswordError);
