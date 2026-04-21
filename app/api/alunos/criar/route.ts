@@ -230,23 +230,25 @@ export async function POST(req: Request) {
       );
     }
 
-   // 7) Enviar email para criar senha
-const { error: inviteError } =
-  await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
-    redirectTo: `${siteUrl}/criar-senha`,
-  });
+    // 7) Enviar email para criar senha
+    const { error: inviteError } =
+      await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
+        redirectTo: siteUrl,
+      });
 
-console.log("INVITE ERROR:", inviteError);
+    console.log("siteUrl usado:", siteUrl);
+    console.log("redirectTo usado:", siteUrl);
+    console.log("INVITE ERROR:", inviteError);
 
-if (inviteError) {
-  return NextResponse.json(
-    {
-      error: "Aluno criado, mas erro ao enviar convite.",
-      details: inviteError.message ?? null,
-    },
-    { status: 500 }
-  );
-}
+    if (inviteError) {
+      return NextResponse.json(
+        {
+          error: "Aluno criado, mas erro ao enviar convite.",
+          details: inviteError.message ?? null,
+        },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
