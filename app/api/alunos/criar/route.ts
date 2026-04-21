@@ -4,7 +4,9 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const siteUrl = (
+  process.env.NEXT_PUBLIC_SITE_URL || "https://academiafacil.vercel.app"
+).replace(/\/$/, "");
 
 if (!supabaseUrl || !anonKey || !serviceRoleKey) {
   throw new Error(
@@ -234,6 +236,8 @@ export async function POST(req: Request) {
         redirectTo: `${siteUrl}/criar-senha`,
       });
 
+    console.log("siteUrl usado no email:", siteUrl);
+    console.log("redirectTo usado no email:", `${siteUrl}/criar-senha`);
     console.log("RESET PASSWORD ERROR:", resetPasswordError);
 
     if (resetPasswordError) {
