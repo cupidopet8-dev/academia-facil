@@ -4,6 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
 const siteUrl = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://academiafacil.vercel.app"
 ).replace(/\/$/, "");
@@ -231,20 +232,25 @@ export async function POST(req: Request) {
     }
 
     // 7) Enviar email para criar senha
-    const { error: inviteError } =
-      await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
-        redirectTo: siteUrl,
+    // IMPORTANTE:
+    // Como o usuário já foi criado no Auth acima, NÃO use inviteUserByEmail aqui.
+    // Use resetPasswordForEmail, pois seu template usa type=recovery.
+    const redirectTo = `${siteUrl}/auth/confirm`;
+
+    const { error: emailError } =
+      await supabasePublic.auth.resetPasswordForEmail(email, {
+        redirectTo,
       });
 
     console.log("siteUrl usado:", siteUrl);
-    console.log("redirectTo usado:", siteUrl);
-    console.log("INVITE ERROR:", inviteError);
+    console.log("redirectTo usado:", redirectTo);
+    console.log("EMAIL ERROR:", emailError);
 
-    if (inviteError) {
+    if (emailError) {
       return NextResponse.json(
         {
           error: "Aluno criado, mas erro ao enviar convite.",
-          details: inviteError.message ?? null,
+          details: emailError.message ?? null,
         },
         { status: 500 }
       );
